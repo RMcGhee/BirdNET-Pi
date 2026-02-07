@@ -150,13 +150,24 @@ EOF
 }
 
 install_Caddyfile() {
+  echo "============================================================================"
+  echo "CADDY CONFIGURATION FOR BIRDNET-Pi"
+  echo "============================================================================"
+  echo ""
+  echo "The installer is NOT modifying your existing Caddyfile."
+  echo "Please manually add the following configuration block to /etc/caddy/Caddyfile:"
+  echo ""
+  echo "A reference configuration has been saved to: $HOME/BirdNET-Pi/templates/Caddyfile.birdnet.example"
+  echo ""
+  
   [ -d /etc/caddy ] || mkdir /etc/caddy
-  if [ -f /etc/caddy/Caddyfile ];then
-    cp /etc/caddy/Caddyfile{,.original}
-  fi
+  
   if ! [ -z ${CADDY_PWD} ];then
   HASHWORD=$(caddy hash-password --plaintext ${CADDY_PWD})
-  cat << EOF > /etc/caddy/Caddyfile
+  cat << EOF > $HOME/BirdNET-Pi/templates/Caddyfile.birdnet.example
+# BirdNET-Pi Caddy Configuration
+# Add this block to your /etc/caddy/Caddyfile
+
 http:// ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
@@ -192,7 +203,10 @@ http:// ${BIRDNETPI_URL} {
 }
 EOF
   else
-    cat << EOF > /etc/caddy/Caddyfile
+    cat << EOF > $HOME/BirdNET-Pi/templates/Caddyfile.birdnet.example
+# BirdNET-Pi Caddy Configuration
+# Add this block to your /etc/caddy/Caddyfile
+
 http:// ${BIRDNETPI_URL} {
   root * ${EXTRACTED}
   file_server browse
@@ -210,6 +224,14 @@ http:// ${BIRDNETPI_URL} {
 }
 EOF
   fi
+  
+  cat $HOME/BirdNET-Pi/templates/Caddyfile.birdnet.example
+  
+  echo ""
+  echo "After adding this configuration, reload Caddy with:"
+  echo "  sudo systemctl reload caddy"
+  echo ""
+  echo "============================================================================"
 
   systemctl enable caddy
   usermod -aG $USER caddy
