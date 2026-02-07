@@ -32,15 +32,15 @@ install_birdnet() {
   fi
   cd ~/BirdNET-Pi || exit 1
   echo "Establishing a python virtual environment"
-  python3 -m venv birdnet
+  uv venv birdnet
   source ./birdnet/bin/activate
-  pip3 install wheel
+  uv pip install wheel
   get_tf_whl
   LOOP_COUNT=2
-  while ! pip3 install -U -r ./requirements_custom.txt
+  while ! uv pip install -U -r ./requirements_custom.txt
   do
     LOOP_COUNT=$(( LOOP_COUNT - 1 ))
-    pip3 cache purge
+    uv cache clean
     [ $LOOP_COUNT == 0 ] && exit 1
     sleep 5
   done

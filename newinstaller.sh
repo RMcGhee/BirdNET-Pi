@@ -43,8 +43,15 @@ if [[ ! -z $PACKAGES_MISSING ]] ; then
   sudo apt -y install $PACKAGES_MISSING
 fi
 
+# Check for uv and install if missing
+if ! which uv &> /dev/null; then
+  echo "Installing uv..."
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
 branch=main
-git clone -b $branch --depth=1 https://github.com/Nachtzuster/BirdNET-Pi.git ${HOME}/BirdNET-Pi &&
+git clone -b $branch --depth=1 git@github.com:RMcGhee/BirdNET-Pi.git ${HOME}/BirdNET-Pi &&
 
 $HOME/BirdNET-Pi/scripts/install_birdnet.sh
 if [ ${PIPESTATUS[0]} -eq 0 ];then
